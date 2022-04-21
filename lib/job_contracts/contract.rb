@@ -1,40 +1,49 @@
+require "observer"
+
 module JobContracts
-  module Contract
-    extend ActiveSupport::Concern
+  class Contract
+    include Observable
 
-    included do
-      amend_contract job: name, expected: {}, actual: {}
-      define_callbacks :contract_breached, scope: [:kind, :name]
+    attr_reader :trigger
+
+    def initialize(trigger: :after, halt: false, **kwargs)
+      @trigger = trigger.to_sym
+      @halt = halt
+      expect.merge! kwargs
     end
 
-    module ClassMethods
-      attr_reader :contract
-
-      def expect(options = {})
-        amend_contract expected: options
-      end
-
-      def amend_contract(options = {})
-        @contract ||= {}.with_indifferent_access
-        @contract.merge! options
-      end
-
-      def after_contract_breached(*filters, &block)
-        set_callback(:contract_breached, :after, *filters, &block)
-      end
+    def expect
+      @expect ||= HashWithIndifferentAccess.new
     end
 
-    delegate :contract, to: "self.class"
+    def actual
+      @actual ||= HashWithIndifferentAccess.new
+    end
+
+    # Method to be implemented by subclasses
+    # NOTE: subclasses should update `actual`, set `satisfied`, and call `super`
+    def enforce!(contractable)
+      add_observer contractable, :after_contract_breach
+      changed if breached?
+      notify_observers self
+    ensure
+      delete_observer contractable
+    end
+
+    def satisfied?
+      !!satisfied
+    end
+
+    def breached?
+      !satisfied?
+    end
+
+    def halt?
+      !!@halt
+    end
 
     protected
 
-    def contract_breached?
-      !!@contract_breached
-    end
-
-    def breach_contract!
-      @contract_breached = true
-      run_callbacks :contract_breached
-    end
+    attr_accessor :satisfied
   end
 end
