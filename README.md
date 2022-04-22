@@ -1,10 +1,11 @@
-# JobContracts
+# Job Contracts
 
-## Contracts for background jobs
+## Enforceable contracts for background jobs
 
-...
+## Todos
 
-## Usage
+- [ ] Add documentation
+- [ ] Add automated tests
 
 ## License
 

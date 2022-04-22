@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Nathan Hopkins"]
   spec.email = ["natehop@gmail.com"]
   spec.homepage = "https://github.com/hopsoft/job_contracts"
-  spec.summary = "Contracts for background jobs"
-  spec.description = "Contracts for background jobs"
+  spec.summary = "Enforceable contracts for background jobs"
+  spec.description = "Enforceable contracts for background jobs"
   spec.license = "MIT"
 
   spec.metadata["homepage_uri"] = spec.homepage
