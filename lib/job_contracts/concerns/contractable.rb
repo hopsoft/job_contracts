@@ -1,4 +1,5 @@
 module JobContracts
+  # Universal mixin for jobs/workers
   module Contractable
     extend ActiveSupport::Concern
 

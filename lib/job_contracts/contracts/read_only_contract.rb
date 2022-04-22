@@ -1,0 +1,36 @@
+require_relative "contract"
+
+module JobContracts
+  class ReadOnlyContract < Contract
+    module ContractablePrepends
+      extend ActiveSupport::Concern
+
+      def perform(*args)
+        ActiveRecord::Base.while_preventing_writes do
+          super
+        end
+      rescue ActiveRecord::ReadOnlyError => error
+        @read_only_error = error
+      end
+    end
+
+    module ContractableIncludes
+      extend ActiveSupport::Concern
+      included do
+        attr_reader :read_only_error
+      end
+    end
+
+    # def initialize
+    # super trigger: :before
+    # end
+
+    def enforce!(contractable)
+      if contractable.read_only_error.present?
+        actual[:error] = contractable.read_only_error.message
+        self.satisfied = false
+      end
+      super
+    end
+  end
+end
