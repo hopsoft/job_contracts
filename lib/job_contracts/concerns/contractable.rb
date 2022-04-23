@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module JobContracts
   # Universal mixin for jobs/workers
   module Contractable

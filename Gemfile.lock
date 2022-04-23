@@ -87,6 +87,7 @@ GEM
     loofah (2.16.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
+    magic_frozen_string_literal (1.2.0)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
     marcel (1.0.2)
@@ -187,6 +188,7 @@ PLATFORMS
 
 DEPENDENCIES
   job_contracts!
+  magic_frozen_string_literal
   sqlite3
   standard (~> 1.10.0)
 

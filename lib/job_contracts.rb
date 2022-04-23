@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "job_contracts/version"
 require "job_contracts/railtie"
 
