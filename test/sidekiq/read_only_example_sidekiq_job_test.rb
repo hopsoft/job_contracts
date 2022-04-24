@@ -2,7 +2,7 @@
 
 require "test_helper"
 class ReadOnlyExampleSidekiqJobTest < Minitest::Test
-  def test_example
-    skip "add some examples to (or delete) #{__FILE__}"
+  def test_job_class_exists
+    assert ReadOnlyExampleSidekiqJob
   end
 end
