@@ -49,7 +49,7 @@ A simple formation might be to use two sets of workers.
 One set dedicated to low-latency jobs with plenty of CPUs, processes, threads, etc...
 Another set dedicated to jobs with a higher tolerance for latency that use fewer resources.
 
-<img width="652" alt="Untitled 2 2022-04-29 14-33-01" src="https://user-images.githubusercontent.com/32920/166065341-65ff77e9-9123-4a3a-83c7-46dc91df6677.png">
+<img width="593" alt="Untitled 2 2022-04-29 15-06-13" src="https://user-images.githubusercontent.com/32920/166069103-e316dcc7-e601-43d0-90df-ad0eda20409b.png">
 
 For this formation, we might determine that jobs processed by the low-latency set should not write to the database.
 
@@ -65,7 +65,7 @@ This would raise awareness about the misconfiuration while ensuring that the wor
 
 - [x] ActiveJob tests
 - [ ] Sidekiq tests
-- [-] Documentation
+- [ ] Documentation
 
 ## License
 
