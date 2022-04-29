@@ -13,7 +13,7 @@ module JobContracts
 
       def perform(*args)
         should_perform = true
-        self.class.contracts_to_enforce_before_perform.each do |contract|
+        contracts.select(&:before?).each do |contract|
           contract.enforce! self
           should_perform = false if contract.breached? && contract.halt?
         end
@@ -24,7 +24,7 @@ module JobContracts
         Thread.new do
           sleep 0
           synchronize do
-            self.class.contracts_to_enforce_after_perform.each do |contract|
+            contracts.select(&:after?).each do |contract|
               contract.enforce! self
             end
           end
@@ -35,12 +35,8 @@ module JobContracts
     module ClassMethods
       attr_reader :after_contract_breach_callback
 
-      def contracts_to_enforce_before_perform
-        @contracts_to_enforce_before_perform ||= Set.new
-      end
-
-      def contracts_to_enforce_after_perform
-        @contracts_to_enforce_after_perform ||= Set.new
+      def contracts
+        @contracts ||= Set.new
       end
 
       def after_contract_breach(value = nil, &block)
@@ -58,16 +54,15 @@ module JobContracts
 
         prepend JobContracts::Contractable::Prepends
 
-        if contract.trigger == :before
-          contracts_to_enforce_before_perform << contract
-        else
-          contracts_to_enforce_after_perform << contract
-        end
+        contract.expected[:queue_name] = queue_name.to_sym
+        contracts << contract
       end
     end
 
+    delegate :contracts, to: "self.class"
+
     def breached_contracts
-      @breached_contracts ||= []
+      @breached_contracts ||= Set.new
     end
 
     def after_contract_breach(contract)

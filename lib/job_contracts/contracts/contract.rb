@@ -25,6 +25,7 @@ module JobContracts
     # Method to be implemented by subclasses
     # NOTE: subclasses should update `actual`, set `satisfied`, and call `super`
     def enforce!(contractable)
+      actual[:queue_name] = contractable.queue_name
       add_observer contractable, :after_contract_breach
       changed if breached?
       notify_observers self
@@ -42,6 +43,14 @@ module JobContracts
 
     def halt?
       !!@halt
+    end
+
+    def before?
+      trigger == :before
+    end
+
+    def after?
+      trigger == :after
     end
 
     protected

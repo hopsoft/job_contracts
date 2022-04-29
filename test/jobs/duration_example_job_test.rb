@@ -7,9 +7,10 @@ class DurationExampleJobTest < ActiveJob::TestCase
     perform_enqueued_jobs { DurationExampleJob.perform_later }
     assert_performed_jobs 1
     job = performed_jobs.first[:job]
-    assert job.breached_contracts.size == 1
-    assert job.breached_contracts.first.breached?
-    assert job.breached_contracts.first.expected[:duration] == 1.second
-    assert job.breached_contracts.first.actual[:duration] >= 1.second
+    breached_contracts = job.breached_contracts.to_a
+    assert breached_contracts.size == 1
+    assert breached_contracts.first.breached?
+    assert breached_contracts.first.expected[:duration] == 1.second
+    assert breached_contracts.first.actual[:duration] >= 1.second
   end
 end

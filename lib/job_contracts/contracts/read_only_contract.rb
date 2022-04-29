@@ -8,7 +8,12 @@ module JobContracts
       extend ActiveSupport::Concern
 
       def perform(*args)
-        ActiveRecord::Base.while_preventing_writes do
+        contract = contracts.find { |c| c.is_a?(ReadOnlyContract) }
+        if contract.expected[:queue_name].to_s == queue_name.to_s
+          ActiveRecord::Base.while_preventing_writes do
+            super
+          end
+        else
           super
         end
       rescue ActiveRecord::ReadOnlyError => error

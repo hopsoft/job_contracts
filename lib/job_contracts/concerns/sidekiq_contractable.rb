@@ -10,6 +10,12 @@ module JobContracts
 
     class MetadataNotFoundError < StandardError; end
 
+    module ClassMethods
+      def queue_name
+        sidekiq_options_hash["queue"]
+      end
+    end
+
     def metadata
       hit = nil
       begin

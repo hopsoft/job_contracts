@@ -6,7 +6,7 @@ class QueueNameExampleSidekiqJob
 
   sidekiq_options queue: :low
 
-  add_contract JobContracts::QueueNameContract.new(queue_name: :low)
+  add_contract JobContracts::QueueNameContract.new
   after_contract_breach :contract_breached
 
   def perform

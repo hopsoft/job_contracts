@@ -7,12 +7,13 @@ class MultipleContractsExampleJobTest < ActiveJob::TestCase
     perform_enqueued_jobs { MultipleContractsExampleJob.perform_later }
     assert_performed_jobs 1
     job = performed_jobs.first[:job]
-    assert job.breached_contracts.size == 2
-    assert job.breached_contracts.first.breached?
-    assert job.breached_contracts.first.expected[:duration] == 1.second
-    assert job.breached_contracts.first.actual[:duration] >= 1.second
-    assert job.breached_contracts.second.breached?
-    assert job.breached_contracts.second.actual.present?
-    assert job.breached_contracts.second.actual[:error].start_with?("Write query attempted while in readonly mode")
+    breached_contracts = job.breached_contracts.to_a
+    assert breached_contracts.size == 2
+    assert breached_contracts.first.breached?
+    assert breached_contracts.first.expected[:duration] == 1.second
+    assert breached_contracts.first.actual[:duration] >= 1.second
+    assert breached_contracts.second.breached?
+    assert breached_contracts.second.actual.present?
+    assert breached_contracts.second.actual[:error].start_with?("Write query attempted while in readonly mode")
   end
 end

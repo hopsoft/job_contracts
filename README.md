@@ -57,6 +57,33 @@ To enforce this, we could use a [`ReadOnlyContract`](https://github.com/hopsoft/
 If the contract is breached, we'd notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
 This would raise awareness about the misconfiuration while ensuring that the work is still peformed.
 
+Here's an example job implementation that accomplishes this.
+
+```ruby
+class FastJob < ApplicationJob
+  include JobContracts::Contractable
+
+  queue_as :critical
+
+  # NOTE: the ReadOnlyContract only enforces on the queue configured above
+  add_contract JobContracts::ReadOnlyContract.new
+  after_contract_breach :contract_breached
+
+  def perform(contracts_to_skip=nil)
+    # logic that doesn't write to the database
+  end
+
+  private
+
+  def contract_breached(contract)
+    # log and notify apm/monitoring service
+
+    # re-enqueue to the queue expected by the contract
+    enqueue queue: :default
+  end
+end
+```
+
 ## More Examples
 
 ## Sidekiq
