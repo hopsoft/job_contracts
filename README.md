@@ -46,16 +46,15 @@ end
 Thoughtful Rails applications often use specialized worker formations.
 
 A simple formation might be to use two sets of workers.
-One set dedicated to low-latency jobs with plenty of cpus, processes, threads, etc...
-Another set dedicated to jobs with a higher tolerance for latency using less resources.
+One set dedicated to low-latency jobs with plenty of CPUs, processes, threads, etc...
+Another set dedicated to jobs with a higher tolerance for latency that use fewer resources.
 
 <img width="652" alt="Untitled 2 2022-04-29 14-33-01" src="https://user-images.githubusercontent.com/32920/166065341-65ff77e9-9123-4a3a-83c7-46dc91df6677.png">
 
-In this scenario, we might determine the best jobs for the low-latency set should be limited to jobs that don't write to the database.
+For this formation, we might determine that jobs processed by the low-latency set should not write to the database.
 
-We might use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb)
-to ensure that jobs enqueued to low-latency queues don't write to the database.
-If the contract is ever breached, we could notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
+To enforce this, we could use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb).
+If the contract is breached, we'd notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
 This would raise awareness about the misconfiuration while ensuring that the work is still peformed.
 
 ## More Examples
