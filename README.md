@@ -37,11 +37,11 @@ end
 - Move unrelated concerns out of the job
 - Simplify logic for better maintainability
 - Isolate platform mechanics such as
-  - Enforce and track SLAs/SLOs/SLIs
+  - Enforcing and tracking SLAs/SLOs/SLIs
   - Telemetry and instrumentation
-  - Help guide and inform worker formation/topology
+  - Helping to inform worker formation/topology and system design
 
-## Use Cases
+## Worker Formations (Operational Topology)
 
 Thoughtful Rails applications often use specialized worker formations.
 
@@ -53,9 +53,10 @@ Another set dedicated to jobs with a higher tolerance for latency using less res
 
 In this scenario, we might determine the best jobs for the low-latency set should be limited to jobs that don't write to the database.
 
-We might use a `ReadOnlyContract` to ensure that jobs enqueued to low-latency queues don't write to the database.
-If the contract is ever breached, we could notify our apm/monitoring service and re-enqueue the work to a high-latency queue,
-which would ensure the work is peformed and raise awareness about the misconfiuration.
+We might use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb)
+to ensure that jobs enqueued to low-latency queues don't write to the database.
+If the contract is ever breached, we could notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
+This would raise awareness about the misconfiuration while ensuring that the work is still peformed.
 
 ## More Examples
 
