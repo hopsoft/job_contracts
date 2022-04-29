@@ -1,12 +1,73 @@
 # Job Contracts
 
-## Enforceable contracts for jobs
+## Test-like guarantees for jobs
+
+Have you ever wanted to prevent a background job from writing to the database?
+What about ensuring it completes within a fixed amount of time after being enqueued?
+
+Contracts allow you to easily apply guarantees like this.
+
+## Quick Start
+
+Imagine you need to ensure a particular job always completes within 5 seconds of being enqueued.
+
+```ruby
+class ImportantJob < ApplicationJob
+  include JobContracts::Contractable
+
+  queue_as :default
+
+  add_contract JobContracts::DurationContract.new(duration: 5.seconds)
+  after_contract_breach :contract_breached
+
+  def perform
+    # logic...
+  end
+
+  private
+
+  def contract_breached(contract)
+    # log and notify apm/monitoring service
+  end
+end
+```
+
+## Benefits
+
+- ___Move unrelated concerns out of the job
+- Simplify logic for better maintainability
+- Isolate platform mechanics such as
+  - Enforce SLAs/SLOs/SLIs
+  - Telemetry and instrumentation
+  - Help guide and inform worker formation/topology
+
+## Use Cases
+
+Thoughtful Rails applications often use specialized worker formations.
+
+A simple formation might be to use two sets of workers.
+One set dedicated to low-latency jobs with plenty of cpus, processes, threads, etc...
+Another set dedicated to jobs with a higher tolerance for latency using less resources.
+
+In this scenario, we might determine the best jobs for the low-latency set should be limited to jobs that don't write to the database.
+
+We might use a `ReadOnlyContract` to ensure that jobs enqueued to low-latency queues don't write to the database.
+If the contract is ever breached, we could notify our apm/monitoring service and re-enqueue the work to a high-latency queue,
+which would ensure the work is peformed and raise awareness about the misconfiuration.
+
+## More Examples
+
+Consider a scenario where
+
+## Sidekiq
+
+
 
 ## Todo
 
 - [x] ActiveJob tests
 - [ ] Sidekiq tests
-- [ ] Documentation
+- [-] Documentation
 
 ## License
 

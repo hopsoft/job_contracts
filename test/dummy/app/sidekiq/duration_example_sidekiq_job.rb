@@ -16,7 +16,7 @@ class DurationExampleSidekiqJob
   private
 
   def contract_breached(contract)
-    # TODO: notify error monitoring service
+    # log and notify apm/monitoring service
     Rails.logger.info "Contract breached! #{contract.inspect}"
   end
 end
