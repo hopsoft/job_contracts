@@ -23,11 +23,8 @@ module JobContracts
       end
     end
 
-    # def initialize
-    # super trigger: :before
-    # end
-
     def enforce!(contractable)
+      self.satisfied = true
       if contractable.read_only_error.present?
         actual[:error] = contractable.read_only_error.message
         self.satisfied = false

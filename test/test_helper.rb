@@ -9,6 +9,7 @@ require "pry-doc"
 require_relative "../test/dummy/config/environment"
 ActiveRecord::Migrator.migrations_paths = [File.expand_path("../test/dummy/db/migrate", __dir__)]
 require "rails/test_help"
+require "minitest/mock"
 
 # Load fixtures from the engine
 if ActiveSupport::TestCase.respond_to?(:fixture_path=)
@@ -18,7 +19,25 @@ if ActiveSupport::TestCase.respond_to?(:fixture_path=)
   ActiveSupport::TestCase.fixtures :all
 end
 
-require_relative "jobs/concerns/contractable_active_job_test"
-DurationExampleJob.prepend ContractableActiveJobTest
-QueueNameExampleJob.prepend ContractableActiveJobTest
-ReadOnlyExampleJob.prepend ContractableActiveJobTest
+require_relative "jobs/concerns/test_contractable_active_job"
+DurationExampleJob.send :include, TestContractableActiveJob
+MultipleContractsExampleJob.send :include, TestContractableActiveJob
+QueueNameExampleJob.send :include, TestContractableActiveJob
+ReadOnlyExampleJob.send :include, TestContractableActiveJob
+
+# stub enqueue for ActiveJob classes that reenqueue
+[MultipleContractsExampleJob, QueueNameExampleJob].each do |job_class|
+  job_class.class_eval do
+    def enqueues
+      @enqueues ||= []
+    end
+
+    define_method :enqueue do |options = {}|
+      if breached_contracts.blank?
+        super queue: options[:queue]
+      else
+        enqueues << options
+      end
+    end
+  end
+end

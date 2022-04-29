@@ -1,11 +1,12 @@
 # Job Contracts
 
-## Enforceable contracts for background jobs
+## Enforceable contracts for jobs
 
-## Todos
+## Todo
 
-- [ ] Add documentation
-- [ ] Add automated tests
+- [x] ActiveJob tests
+- [ ] Sidekiq tests
+- [ ] Documentation
 
 ## License
 

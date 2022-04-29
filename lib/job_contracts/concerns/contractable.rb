@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "monitor"
+
 module JobContracts
   # Universal mixin for jobs/workers
   module Contractable
@@ -7,6 +9,7 @@ module JobContracts
 
     module Prepends
       extend ActiveSupport::Concern
+      include MonitorMixin
 
       def perform(*args)
         should_perform = true
@@ -15,8 +18,16 @@ module JobContracts
           should_perform = false if contract.breached? && contract.halt?
         end
         super if should_perform
-        self.class.contracts_to_enforce_after_perform.each do |contract|
-          contract.enforce! self
+      ensure
+        # enforce contracts in a separate thread to ensure that any perform related behavior
+        # defined in ContractablePrepends will finish executing before we invoke contract.enforce!
+        Thread.new do
+          sleep 0
+          synchronize do
+            self.class.contracts_to_enforce_after_perform.each do |contract|
+              contract.enforce! self
+            end
+          end
         end
       end
     end
@@ -55,7 +66,12 @@ module JobContracts
       end
     end
 
+    def breached_contracts
+      @breached_contracts ||= []
+    end
+
     def after_contract_breach(contract)
+      breached_contracts << contract
       method = self.class.after_contract_breach_callback
       case method
       when Proc then method.call(contract)
