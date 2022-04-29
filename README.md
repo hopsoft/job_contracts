@@ -34,10 +34,10 @@ end
 
 ## Benefits
 
-- ___Move unrelated concerns out of the job
+- Move unrelated concerns out of the job
 - Simplify logic for better maintainability
 - Isolate platform mechanics such as
-  - Enforce SLAs/SLOs/SLIs
+  - Enforce and track SLAs/SLOs/SLIs
   - Telemetry and instrumentation
   - Help guide and inform worker formation/topology
 
@@ -49,6 +49,8 @@ A simple formation might be to use two sets of workers.
 One set dedicated to low-latency jobs with plenty of cpus, processes, threads, etc...
 Another set dedicated to jobs with a higher tolerance for latency using less resources.
 
+<img width="652" alt="Untitled 2 2022-04-29 14-33-01" src="https://user-images.githubusercontent.com/32920/166065341-65ff77e9-9123-4a3a-83c7-46dc91df6677.png">
+
 In this scenario, we might determine the best jobs for the low-latency set should be limited to jobs that don't write to the database.
 
 We might use a `ReadOnlyContract` to ensure that jobs enqueued to low-latency queues don't write to the database.
@@ -57,11 +59,7 @@ which would ensure the work is peformed and raise awareness about the misconfiur
 
 ## More Examples
 
-Consider a scenario where
-
 ## Sidekiq
-
-
 
 ## Todo
 
