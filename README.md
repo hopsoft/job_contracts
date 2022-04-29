@@ -5,11 +5,11 @@
 Have you ever wanted to prevent a background job from writing to the database?
 What about ensuring it completes within a fixed amount of time after being enqueued?
 
-Contracts allow you to easily apply guarantees like this.
+Contracts allow you to apply guarantees like this easily.
 
 ## Quick Start
 
-Imagine you need to ensure a particular job always completes within 5 seconds of being enqueued.
+Imagine you need to ensure a specific job type completes within 5 seconds of being enqueued.
 
 ```ruby
 class ImportantJob < ApplicationJob
@@ -46,16 +46,16 @@ end
 Thoughtful Rails applications often use specialized worker formations.
 
 A simple formation might be to use two sets of workers.
-One set dedicated to low-latency jobs with plenty of CPUs, processes, threads, etc...
-Another set dedicated to jobs with a higher tolerance for latency that use fewer resources.
+One set is dedicated to low-latency jobs with plenty of CPUs, processes, threads, etc...,
+while another set is dedicated to jobs with a higher tolerance for latency.
 
 <img width="593" alt="Untitled 2 2022-04-29 15-06-13" src="https://user-images.githubusercontent.com/32920/166069103-e316dcc7-e601-43d0-90df-ad0eda20409b.png">
 
-For this formation, we might determine that jobs processed by the low-latency set should not write to the database.
+We might determine that low-latency jobs should not write to the database for this formation.
 
-To enforce this, we could use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb).
-If the contract is breached, we'd notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
-This would raise awareness about the misconfiuration while ensuring that the work is still peformed.
+We could use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb) for this.
+If the contract is breached, we will notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
+This behavior would raise awareness about the misconfiguration while ensuring that the work is still performed.
 
 Here's an example job implementation that accomplishes this.
 
@@ -96,4 +96,4 @@ end
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
