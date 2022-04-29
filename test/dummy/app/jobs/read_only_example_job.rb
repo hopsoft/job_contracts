@@ -16,6 +16,6 @@ class ReadOnlyExampleJob < ApplicationJob
 
   def contract_breached(contract)
     # TODO: notify error monitoring service
-    Rails.logger.info "Contract violation! #{contract.inspect}"
+    Rails.logger.info "Contract breached! #{contract.inspect}"
   end
 end

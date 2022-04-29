@@ -11,11 +11,11 @@ module JobContracts
     def initialize(trigger: :after, halt: false, **kwargs)
       @trigger = trigger.to_sym
       @halt = halt
-      expect.merge! kwargs
+      expected.merge! kwargs
     end
 
-    def expect
-      @expect ||= HashWithIndifferentAccess.new
+    def expected
+      @expected ||= HashWithIndifferentAccess.new
     end
 
     def actual

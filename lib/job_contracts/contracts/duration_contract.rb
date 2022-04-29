@@ -10,7 +10,7 @@ module JobContracts
 
     def enforce!(contractable)
       actual[:duration] = (Time.current - Time.parse(contractable.enqueued_at)).seconds
-      self.satisfied = actual[:duration] < expect[:duration].seconds
+      self.satisfied = actual[:duration] < expected[:duration].seconds
       super
     end
   end

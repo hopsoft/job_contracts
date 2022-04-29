@@ -9,7 +9,7 @@ class DurationExampleJobTest < ActiveJob::TestCase
     job = performed_jobs.first[:job]
     assert job.breached_contracts.size == 1
     assert job.breached_contracts.first.breached?
-    assert job.breached_contracts.first.expect[:duration] == 1.second
+    assert job.breached_contracts.first.expected[:duration] == 1.second
     assert job.breached_contracts.first.actual[:duration] >= 1.second
   end
 end

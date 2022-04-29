@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
-class QueueNameExampleSidekiqJob
+class MultipleContractsExampleSidekiqJob
   include Sidekiq::Job
   include JobContracts::SidekiqContractable
 
   sidekiq_options queue: :low
 
   add_contract JobContracts::QueueNameContract.new(queue_name: :low)
+  add_contract JobContracts::DurationContract.new(duration: 1.second)
+  add_contract JobContracts::ReadOnlyContract.new
   after_contract_breach :contract_breached
 
   def perform
-    Rails.logger.info "Actually performed on: #{queue_name}"
+    sleep 2
+    User.create! name: "test"
   end
 
   private
@@ -19,7 +22,9 @@ class QueueNameExampleSidekiqJob
     # TODO: notify error monitoring service
     Rails.logger.info "Contract breached! #{contract.inspect}"
 
-    # re-enqueue to the queue expected by the contract
-    self.class.set(queue: contract.expected[:queue_name]).perform_async
+    if contract.is_a?(JobContracts::QueueNameContract)
+      # re-enqueue to the queue expected by the queue name contract
+      self.class.set(queue: contract.expected[:queue_name]).perform_async
+    end
   end
 end

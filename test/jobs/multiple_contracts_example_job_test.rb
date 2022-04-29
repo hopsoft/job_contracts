@@ -9,7 +9,7 @@ class MultipleContractsExampleJobTest < ActiveJob::TestCase
     job = performed_jobs.first[:job]
     assert job.breached_contracts.size == 2
     assert job.breached_contracts.first.breached?
-    assert job.breached_contracts.first.expect[:duration] == 1.second
+    assert job.breached_contracts.first.expected[:duration] == 1.second
     assert job.breached_contracts.first.actual[:duration] >= 1.second
     assert job.breached_contracts.second.breached?
     assert job.breached_contracts.second.actual.present?

@@ -11,7 +11,7 @@ module JobContracts
     def enforce!(contractable)
       queue_name = contractable.queue_name
       actual[:queue_name] = queue_name
-      self.satisfied = queue_name.to_s == expect[:queue_name].to_s
+      self.satisfied = queue_name.to_s == expected[:queue_name].to_s
       super
     end
   end
