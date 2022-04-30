@@ -51,11 +51,10 @@ while another set is dedicated to jobs with a higher tolerance for latency.
 
 <img width="593" alt="Untitled 2 2022-04-29 15-06-13" src="https://user-images.githubusercontent.com/32920/166069103-e316dcc7-e601-43d0-90df-ad0eda20409b.png">
 
-We might determine that low-latency jobs should not write to the database for this formation.
-
-We could use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb) for this.
-If the contract is breached, we will notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
-This behavior would raise awareness about the misconfiguration while ensuring that the work is still performed.
+Perhaps we determine that low-latency jobs should not write to the database.
+We can use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb)
+to enforce this decision. If the contract is breached, we will notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
+This behavior will raise awareness about the misconfiguration while ensuring the job is still performed.
 
 Here's an example job implementation that accomplishes this.
 
