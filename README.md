@@ -70,7 +70,8 @@ class FastJob < ApplicationJob
   after_contract_breach :contract_breached
 
   def perform(contracts_to_skip=nil)
-    # logic that doesn't write to the database
+    # logic that shouldn't write to the database,
+    # but might accidentally due to complex or opaque internals
   end
 
   private
