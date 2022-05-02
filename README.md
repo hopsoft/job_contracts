@@ -205,4 +205,5 @@ The gem is available as open-source under the terms of the [MIT License](https:/
 This project is sponsored by [Orbit.love](https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts) *(mission control for your community)*.
 
 <a href="https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts">
+  <img height="50" src="https://user-images.githubusercontent.com/32920/166343064-55f92cdb-c81b-4f85-80a8-167bfda73c85.png"></img>
 </a>
