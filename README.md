@@ -202,7 +202,7 @@ The gem is available as open-source under the terms of the [MIT License](https:/
 
 ## Sponsors
 
-This project is sponsored by [Orbit.love](https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts), *mission control for your community*.
+This project is sponsored by [Orbit.love](https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts) *(mission control for your community)*.
 
 <a href="https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts">
 </a>
