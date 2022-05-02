@@ -17,8 +17,10 @@ Contracts allow you to apply assurances like this easily.
   - [More Examples](#more-examples)
   - [Sidekiq](#sidekiq)
   - [Contracts](#contracts)
+    - [Breach of Contract](#breach-of-contract)
     - [Anatomy of a Contract](#anatomy-of-a-contract)
     - [Defining a Contract](#defining-a-contract)
+    - [Using a Contract](#using-a-contract)
   - [Todo](#todo)
   - [License](#license)
 
@@ -26,15 +28,15 @@ Contracts allow you to apply assurances like this easily.
 
 ## Why?
 
-- Improve performance via enforced *(SLAs/SLOs/SLIs)*
-- Refine telemetry and instrumentation efforts
-- Supervise and manage queue backpressure
-- Improve worker formation/topology
-- Isolate jobs for maximum throughput
+- Improve job performance via enforced *(SLAs/SLOs/SLIs)*
+- Refine your telemetry and instrumentation efforts
+- Supervise and manage job queue backpressure
+- Improve your worker formation/topology
+- Properly isolate jobs for maximum throughput
 
 ## Quick Start
 
-Imagine you need to ensure a specific job type completes within 5 seconds of being enqueued.
+Imagine you need to ensure a specific job completes within 5 seconds of being enqueued.
 
 ```ruby
 class ImportantJob < ApplicationJob
@@ -42,14 +44,14 @@ class ImportantJob < ApplicationJob
 
   queue_as :default
 
-  add_contract JobContracts::DurationContract.new(duration: 5.seconds)
+  add_contract JobContracts::DurationContract.new(max: 5.seconds)
 
   def perform
     # logic...
   end
 
   def contract_breached!(contract)
-    # log and notify apm/monitoring service
+    # handle breach...
   end
 end
 ```
@@ -119,6 +121,8 @@ For example, we have a default set of contracts that verify the following:
 - That a job is only performed on a specific queue
 - That a job does not write to the database
 
+### Breach of Contract
+
 A __breach of contract__ is similar to a test failure; however, the breach can be handled in several different ways.
 
 - Log and instrument the breach and continue
@@ -157,7 +161,9 @@ class ArgumentContract < JobContracts::Contract
 end
 ```
 
-Here's how to use this contract in a job.
+### Using a Contract
+
+Here's how to use the `ArgumentContract` in a job.
 
 ```ruby
 # app/jobs/argument_example_job.rb
@@ -178,7 +184,7 @@ end
 ```
 
 This job will help ensure that the argument passed to perform is between 1 and 10.
-*It's up to you to determine how to handle a breach of this contract.*
+*It's up to you to determine how to handle a breach of contract.*
 
 ## Todo
 
