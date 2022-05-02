@@ -1,6 +1,6 @@
 # Job Contracts
 
-## Test-like guarantees for jobs
+## Test-like assurances for jobs
 
 Have you ever wanted to prevent a background job from writing to the database?
 What about ensuring it completes within a fixed amount of time after being enqueued?
