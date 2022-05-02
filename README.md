@@ -56,6 +56,8 @@ class ImportantJob < ApplicationJob
 end
 ```
 
+*How to handle a [__breach of contract__](#breach-of-contract).*
+
 ## Worker Formation/Topology
 
 Thoughtful Rails applications often use specialized worker formations.
