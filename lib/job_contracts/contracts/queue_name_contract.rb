@@ -5,7 +5,12 @@ require_relative "contract"
 module JobContracts
   class QueueNameContract < Contract
     def initialize(queue_name:)
-      super trigger: :before, halt: true, queues: ["*"], queue_name: queue_name.to_s
+      super(
+        trigger: :before,
+        halt: true,
+        queues: ["*"],
+        expected: {queue_name: queue_name.to_s}
+      )
     end
 
     def enforce!(contractable)

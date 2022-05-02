@@ -5,7 +5,24 @@
 Have you ever wanted to prevent a background job from writing to the database?
 What about ensuring it completes within a fixed amount of time after being enqueued?
 
-Contracts allow you to apply guarantees like this easily.
+Contracts allow you to apply assurances like this easily.
+
+<!-- Tocer[start]: Auto-generated, don't remove. -->
+
+## Table of Contents
+
+  - [Quick Start](#quick-start)
+  - [Benefits](#benefits)
+  - [Worker Formations (Operational Topology)](#worker-formations-operational-topology)
+  - [More Examples](#more-examples)
+  - [Sidekiq](#sidekiq)
+  - [Contracts](#contracts)
+    - [Anatomy of a Contract](#anatomy-of-a-contract)
+    - [Defining a Contract](#defining-a-contract)
+  - [Todo](#todo)
+  - [License](#license)
+
+<!-- Tocer[finish]: Auto-generated, don't remove. -->
 
 ## Quick Start
 
@@ -90,6 +107,79 @@ end
 ## More Examples
 
 ## Sidekiq
+
+## Contracts
+
+A contract is an agreement that a job should satisify.
+Failing to satisfy the contract is considered a __breach of contract__.
+
+Contracts help you track actual outcomes and compare them to expected outcomes.
+For example, we have a default set of contracts that verify the following:
+
+- That a job will execute within a set amount of time
+- That a job is only peformed on a specific queue
+- That a job does not write to the database
+
+A __breach of contract__ is similar to a test failure; however, the breach can be handled in several different ways.
+
+- Log and instrument the breach and continue
+- Halt processing of the job and all other contracts and raise an exception
+- Move the job to a queue where the contract will not be enforced
+- etc...
+
+*Mix and match any combination of the above given your requiements.*
+
+### Anatomy of a Contract
+
+Contracts support the following constructor arguments.
+
+- `trigger` [`:before`, \*__`:after`__] - when contract enforcement takes place *(before or after perform)*
+- `halt` [`true`, \*__`false`__] - indicates whether or not to stop processing when the contract is breached *(other contracts and the job itself)*
+- `queues` - a list of queue names that this contract will be enforced on *(defaults to the configured queue, or all)*
+- `expected` - a `Hash` that defines contract expectations
+
+### Defining a Contract
+
+Here's a contrived but simple example that ensures the first argument to performi fits within a specific range of values.
+
+```ruby
+# app/contracts/argument_contract.rb
+class ArgumentContract < JobContracts::Contract
+  def initialize(range:)
+    # enforced on all queues
+    super queues: ["*"], expected: {range: range}
+  end
+
+  def enforce!(contractable)
+    actual[:argument] = contractable.arguments.first
+    self.satisfied = expected[:range].cover?(actual[:argument])
+    super
+  end
+end
+```
+
+Here's how to use this contract in a job.
+
+```ruby
+# app/jobs/argument_example_job.rb
+class ArgumentExampleJob < ApplicationJob
+  include JobContracts::Contractable
+
+  queue_as :default
+  add_contract ArgumentContract.new(range: (1..10))
+
+  def perform(arg)
+    # logic...
+  end
+
+  def contract_breached!(contract)
+    # handle breach...
+  end
+end
+```
+
+This job will help ensure that the argument passed to perform is between 1 and 10.
+*It's up to you to determine how to handle a breach of this contract.*
 
 ## Todo
 

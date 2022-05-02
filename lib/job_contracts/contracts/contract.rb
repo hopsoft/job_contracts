@@ -8,11 +8,11 @@ module JobContracts
 
     attr_reader :trigger, :queues
 
-    def initialize(trigger: :after, halt: false, queues: [], **kwargs)
+    def initialize(trigger: :after, halt: false, queues: [], expected: {})
       @trigger = trigger.to_sym
       @halt = halt
       @queues = Set.new(queues.map(&:to_s))
-      expected.merge! kwargs
+      self.expected.merge! expected
     end
 
     def expected
