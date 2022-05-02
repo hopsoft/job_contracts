@@ -3,6 +3,7 @@
 class DurationExampleJob < ApplicationJob
   include JobContracts::Contractable
 
+  queue_as :default
   add_contract JobContracts::DurationContract.new(duration: 1.second)
 
   def perform

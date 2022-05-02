@@ -56,7 +56,8 @@ module JobContracts
 
         prepend JobContracts::Contractable::Prepends
 
-        contract.expected[:queue_name] = queue_name.to_s
+        contract.queues << queue_name.to_s if contract.queues.blank? && queue_name.present?
+        contract.queues << "*" if contract.queues.blank?
         contracts << contract
       end
     end

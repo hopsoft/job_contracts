@@ -9,7 +9,7 @@ module JobContracts
 
       def perform(*args)
         contract = contracts.find { |c| c.is_a?(ReadOnlyContract) }
-        if queue_name.to_s == contract.expected[:queue_name]
+        if contract.should_enforce?(self)
           ActiveRecord::Base.while_preventing_writes do
             super
           end

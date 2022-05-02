@@ -4,8 +4,8 @@ require_relative "contract"
 
 module JobContracts
   class DurationContract < Contract
-    def initialize(duration:)
-      super
+    def initialize(duration:, queues: ["*"], **kwargs)
+      super duration: duration, queues: queues, **kwargs
     end
 
     def enforce!(contractable)

@@ -6,7 +6,7 @@ class MultipleContractsExampleSidekiqJob
 
   sidekiq_options queue: :low
 
-  add_contract JobContracts::QueueNameContract.new
+  add_contract JobContracts::QueueNameContract.new(queue_name: :low)
   add_contract JobContracts::DurationContract.new(duration: 1.second)
   add_contract JobContracts::ReadOnlyContract.new
 

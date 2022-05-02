@@ -3,6 +3,7 @@
 class ReadOnlyExampleJob < ApplicationJob
   include JobContracts::Contractable
 
+  queue_as :default
   add_contract JobContracts::ReadOnlyContract.new
 
   def perform
