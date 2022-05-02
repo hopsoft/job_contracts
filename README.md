@@ -21,10 +21,10 @@ Contracts allow you to apply assurances like this easily.
     - [Defining a Contract](#defining-a-contract)
     - [Using a Contract](#using-a-contract)
   - [Worker Formation/Topology](#worker-formationtopology)
-  - [More Examples](#more-examples)
   - [Sidekiq](#sidekiq)
   - [Todo](#todo)
   - [License](#license)
+  - [Sponsors](#sponsors)
 
 <!-- Tocer[finish]: Auto-generated, don't remove. -->
 
@@ -200,7 +200,7 @@ end
 
 The gem is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
-## Orbit.love
+## Sponsors
 
 This project is sponsored by [Orbit.love](https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts), *mission control for your community*.
 
