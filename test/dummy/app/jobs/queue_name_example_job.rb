@@ -4,7 +4,6 @@ class QueueNameExampleJob < ApplicationJob
   include JobContracts::Contractable
 
   queue_as :low
-
   add_contract JobContracts::QueueNameContract.new
 
   def perform(*args)

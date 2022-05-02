@@ -15,8 +15,10 @@ Imagine you need to ensure a specific job type completes within 5 seconds of bei
 class ImportantJob < ApplicationJob
   include JobContracts::Contractable
 
+  # The queue must be configured before adding contracts
   queue_as :default
 
+  # by default contracts are only enforced on the queue configured above
   add_contract JobContracts::DurationContract.new(duration: 5.seconds)
 
   def perform
@@ -59,9 +61,12 @@ Here's an example job implementation that accomplishes this.
 class FastJob < ApplicationJob
   include JobContracts::Contractable
 
+  # The queue must be configured before adding contracts
   queue_as :critical
 
-  # NOTE: the ReadOnlyContract only enforces on the queue configured above
+  # by default contracts are only enforced on the queue configured above
+  # this allows us to halt job execution and reenqueue the job to a different queue
+  # where the contract will not be enforced
   add_contract JobContracts::ReadOnlyContract.new
 
   def perform(contracts_to_skip=nil)
@@ -72,7 +77,9 @@ class FastJob < ApplicationJob
   def contract_breached!(contract)
     # log and notify apm/monitoring service
 
-    # re-enqueue to the queue expected by the contract
+    # re-enqueue to a different queue
+    # where the database write will be permitted
+    # i.e. where the contract will not be enforced
     enqueue queue: :default
   end
 end
