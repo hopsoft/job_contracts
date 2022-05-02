@@ -59,11 +59,15 @@ Here's an example job implementation that accomplishes this.
 class FastJob < ApplicationJob
   include JobContracts::Contractable
 
+  # Configure the queue before adding contracts to support default enforcement queues
   queue_as :critical
 
-  # only enforces on the critical queue
-  # this allows us to halt job execution and reenqueue the job to a different queue
-  # where the contract will not be enforced
+  # Only enforces on the critical queue
+  # This allows us to halt job execution and reenqueue the job to a different queue
+  # where the contract will not be enforced (this a contract's default behavior)
+  #
+  # NOTE: the arg `queues: [:critical]` is default behavior in this example
+  #       we're setting it explicitly for illustration purposes
   add_contract JobContracts::ReadOnlyContract.new(queues: [:critical])
 
   def perform(contracts_to_skip=nil)
