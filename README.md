@@ -11,9 +11,9 @@ Contracts allow you to apply assurances like this easily.
 
 ## Table of Contents
 
+  - [Why?](#why)
   - [Quick Start](#quick-start)
-  - [Benefits](#benefits)
-  - [Worker Formations (Operational Topology)](#worker-formations-operational-topology)
+  - [Worker Formation/Topology](#worker-formationtopology)
   - [More Examples](#more-examples)
   - [Sidekiq](#sidekiq)
   - [Contracts](#contracts)
@@ -23,6 +23,14 @@ Contracts allow you to apply assurances like this easily.
   - [License](#license)
 
 <!-- Tocer[finish]: Auto-generated, don't remove. -->
+
+## Why?
+
+- Improve performance via enforced *(SLAs/SLOs/SLIs)*
+- Refine telemetry and instrumentation efforts
+- Supervise and manage queue backpressure
+- Improve worker formation/topology
+- Isolate jobs for maximum throughput
 
 ## Quick Start
 
@@ -46,29 +54,20 @@ class ImportantJob < ApplicationJob
 end
 ```
 
-## Benefits
-
-- Move unrelated concerns out of the job
-- Simplify logic for better maintainability
-- Isolate platform mechanics such as
-  - Enforcing and tracking SLAs/SLOs/SLIs
-  - Telemetry and instrumentation
-  - Helping to inform worker formation/topology and system design
-
-## Worker Formations (Operational Topology)
+## Worker Formation/Topology
 
 Thoughtful Rails applications often use specialized worker formations.
 
 A simple formation might be to use two sets of workers.
-One set is dedicated to low-latency jobs with plenty of CPUs, processes, threads, etc...,
-while another set is dedicated to jobs with a higher tolerance for latency.
+One set dedicated to low-latency jobs with plenty of CPUs, processes, threads, etc...,
+with another set dedicated to jobs with a high tolerance for latency.
 
 <img width="593" alt="Untitled 2 2022-04-29 15-06-13" src="https://user-images.githubusercontent.com/32920/166069103-e316dcc7-e601-43d0-90df-ad0eda20409b.png">
 
-Perhaps we determine that low-latency jobs should not write to the database.
+Say we determine that low-latency jobs should __not__ write to the database.
 We can use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb)
-to enforce this decision. If the contract is breached, we will notify our apm/monitoring service and re-enqueue the work to a high-latency queue.
-This behavior will raise awareness about the misconfiguration while ensuring the job is still performed.
+to enforce this decision. If the contract is breached, we will notify our apm/monitoring service and re-enqueue the job to a high-latency queue.
+This will ensure that our low latency queue doesn't fill up with slow-running jobs and block work that can run faster. It also raises awareness about job misconfigurations while ensuring those slow jobs still get performed.
 
 Here's an example job implementation that accomplishes this.
 
@@ -110,14 +109,14 @@ end
 
 ## Contracts
 
-A contract is an agreement that a job should satisify.
+A contract is an agreement that a job should satisfy.
 Failing to satisfy the contract is considered a __breach of contract__.
 
-Contracts help you track actual outcomes and compare them to expected outcomes.
+Contracts help you track actual results and compare them to expected outcomes.
 For example, we have a default set of contracts that verify the following:
 
 - That a job will execute within a set amount of time
-- That a job is only peformed on a specific queue
+- That a job is only performed on a specific queue
 - That a job does not write to the database
 
 A __breach of contract__ is similar to a test failure; however, the breach can be handled in several different ways.
@@ -127,20 +126,20 @@ A __breach of contract__ is similar to a test failure; however, the breach can b
 - Move the job to a queue where the contract will not be enforced
 - etc...
 
-*Mix and match any combination of the above given your requiements.*
+*Mix and match any combination of the above given your requirements.*
 
 ### Anatomy of a Contract
 
 Contracts support the following constructor arguments.
 
-- `trigger` [`:before`, \*__`:after`__] - when contract enforcement takes place *(before or after perform)*
-- `halt` [`true`, \*__`false`__] - indicates whether or not to stop processing when the contract is breached *(other contracts and the job itself)*
-- `queues` - a list of queue names that this contract will be enforced on *(defaults to the configured queue, or all)*
-- `expected` - a `Hash` that defines contract expectations
+- `trigger` `[Symbol]` (`:before`, __`:after`__) - when contract enforcement takes place *(before or after perform)*
+- `halt` `[Boolean]` (`true`, __`false`__) - indicates whether or not to stop processing when the contract is breached *(other contracts and the job itself)*
+- `queues` - `[Array<String,Symbol>]` - a list of queue names that this contract will be enforced on *(defaults to the configured queue, or all)*
+- `expected` `[Hash]` - a dictionary of contract expectations
 
 ### Defining a Contract
 
-Here's a contrived but simple example that ensures the first argument to performi fits within a specific range of values.
+Here's a contrived but simple example that ensures the first argument to perform fits within a specific range of values.
 
 ```ruby
 # app/contracts/argument_contract.rb
