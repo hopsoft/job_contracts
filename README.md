@@ -68,9 +68,9 @@ Failing to satisfy the contract is considered a __breach of contract__.
 Contracts help you track actual results and compare them to expected outcomes.
 For example, we have a default set of contracts that verify the following:
 
-- That a job will execute within a set amount of time
-- That a job is only performed on a specific queue
-- That a job does not write to the database
+- That a job will [execute within a set amount of time](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/duration_contract.rb)
+- That a job is only [performed on a specific queue](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/queue_name_contract.rb)
+- That a job [does not write to the database](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb)
 
 ### Breach of Contract
 
@@ -186,9 +186,9 @@ class FastJob < ApplicationJob
 end
 ```
 
-## More Examples
-
 ## Sidekiq
+
+...
 
 ## Todo
 
@@ -199,3 +199,10 @@ end
 ## License
 
 The gem is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## Orbit.love
+
+This project is sponsored by [Orbit.love](https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts), *mission control for your community*.
+
+<a href="https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts">
+</a>
