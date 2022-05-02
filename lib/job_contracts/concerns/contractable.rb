@@ -33,14 +33,16 @@ module JobContracts
     end
 
     module ClassMethods
-      attr_reader :after_contract_breach_callback
-
       def contracts
         @contracts ||= Set.new
       end
 
-      def after_contract_breach(value = nil, &block)
-        @after_contract_breach_callback = value || block
+      def on_contract_breach(value = nil, &block)
+        @on_contract_breach_callback = value || block
+      end
+
+      def on_contract_breach_callback
+        @on_contract_breach_callback ||= :contract_breached!
       end
 
       def add_contract(contract)
@@ -54,7 +56,7 @@ module JobContracts
 
         prepend JobContracts::Contractable::Prepends
 
-        contract.expected[:queue_name] = queue_name.to_sym
+        contract.expected[:queue_name] = queue_name.to_s
         contracts << contract
       end
     end
@@ -65,14 +67,15 @@ module JobContracts
       @breached_contracts ||= Set.new
     end
 
-    def after_contract_breach(contract)
+    # Default callback
+    def contract_breached!
+      # noop / override in job subclasses
+    end
+
+    def on_contract_breach(contract)
       breached_contracts << contract
-      method = self.class.after_contract_breach_callback
-      case method
-      when Proc then method.call(contract)
-      when String, Symbol then send(method, contract)
-      else raise NotImplementedError
-      end
+      method = self.class.on_contract_breach_callback
+      method.is_a?(Proc) ? method.call(contract) : send(method.to_s, contract)
     end
   end
 end

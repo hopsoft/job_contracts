@@ -17,9 +17,9 @@ class QueueNameExampleJobTest < ActiveJob::TestCase
     breached_contracts = job.breached_contracts.to_a
     assert breached_contracts.size == 1
     assert breached_contracts.first.breached?
-    assert breached_contracts.first.expected[:queue_name].to_sym == :low
-    assert breached_contracts.first.actual[:queue_name].to_sym == :default
+    assert breached_contracts.first.expected[:queue_name] == "low"
+    assert breached_contracts.first.actual[:queue_name] == "default"
     assert job.enqueues.size == 1
-    assert job.enqueues.first[:queue] == :low
+    assert job.enqueues.first[:queue] == "low"
   end
 end
