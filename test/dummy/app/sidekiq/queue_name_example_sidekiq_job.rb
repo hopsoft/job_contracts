@@ -6,7 +6,7 @@ class QueueNameExampleSidekiqJob
 
   sidekiq_options queue: :low
 
-  add_contract JobContracts::QueueNameContract.new
+  add_contract JobContracts::QueueNameContract.new(queue_name: :low)
 
   def perform
     Rails.logger.info "Actually performed on: #{queue_name}"

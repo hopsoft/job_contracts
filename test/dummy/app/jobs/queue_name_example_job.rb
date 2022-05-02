@@ -4,7 +4,7 @@ class QueueNameExampleJob < ApplicationJob
   include JobContracts::Contractable
 
   queue_as :low
-  add_contract JobContracts::QueueNameContract.new
+  add_contract JobContracts::QueueNameContract.new(queue_name: :low)
 
   def perform(*args)
     Rails.logger.info "Actually performed on: #{queue_name}"
