@@ -7,15 +7,12 @@ class QueueNameExampleSidekiqJob
   sidekiq_options queue: :low
 
   add_contract JobContracts::QueueNameContract.new
-  after_contract_breach :contract_breached
 
   def perform
     Rails.logger.info "Actually performed on: #{queue_name}"
   end
 
-  private
-
-  def contract_breached(contract)
+  def contract_breached!(contract)
     # log and notify apm/monitoring service
     Rails.logger.info "Contract breached! #{contract.inspect}"
 

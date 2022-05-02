@@ -18,15 +18,12 @@ class ImportantJob < ApplicationJob
   queue_as :default
 
   add_contract JobContracts::DurationContract.new(duration: 5.seconds)
-  after_contract_breach :contract_breached
 
   def perform
     # logic...
   end
 
-  private
-
-  def contract_breached(contract)
+  def contract_breached!(contract)
     # log and notify apm/monitoring service
   end
 end
@@ -66,16 +63,13 @@ class FastJob < ApplicationJob
 
   # NOTE: the ReadOnlyContract only enforces on the queue configured above
   add_contract JobContracts::ReadOnlyContract.new
-  after_contract_breach :contract_breached
 
   def perform(contracts_to_skip=nil)
     # logic that shouldn't write to the database,
     # but might accidentally due to complex or opaque internals
   end
 
-  private
-
-  def contract_breached(contract)
+  def contract_breached!(contract)
     # log and notify apm/monitoring service
 
     # re-enqueue to the queue expected by the contract
