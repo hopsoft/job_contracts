@@ -5,8 +5,7 @@ class DurationExampleSidekiqJob
   include JobContracts::SidekiqContractable
 
   sidekiq_options queue: :default
-
-  add_contract JobContracts::DurationContract.new(duration: 1.second)
+  add_contract JobContracts::DurationContract.new(max: 1.second)
 
   def perform
     sleep 2
@@ -14,6 +13,6 @@ class DurationExampleSidekiqJob
 
   def contract_breached!(contract)
     # log and notify apm/monitoring service
-    Rails.logger.info "Contract breached! #{contract.inspect}"
+    Rails.logger.info "Contract breached! #{contract.to_h.inspect}"
   end
 end

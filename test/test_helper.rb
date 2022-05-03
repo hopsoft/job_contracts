@@ -24,6 +24,7 @@ DurationExampleJob.send :include, TestContractableActiveJob
 MultipleContractsExampleJob.send :include, TestContractableActiveJob
 QueueNameExampleJob.send :include, TestContractableActiveJob
 ReadOnlyExampleJob.send :include, TestContractableActiveJob
+ArgumentExampleJob.send :include, TestContractableActiveJob
 
 # stub enqueue for ActiveJob classes that reenqueue
 [MultipleContractsExampleJob, QueueNameExampleJob].each do |job_class|

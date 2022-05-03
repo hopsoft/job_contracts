@@ -12,7 +12,7 @@ class QueueNameExampleJob < ApplicationJob
 
   def contract_breached!(contract)
     # log and notify apm/monitoring service
-    Rails.logger.info "Contract breached! #{contract.inspect}"
+    Rails.logger.info "Contract breached! #{contract.to_h.inspect}"
 
     # re-enqueue to the queue expected by the contract
     enqueue queue: contract.expected[:queue_name]

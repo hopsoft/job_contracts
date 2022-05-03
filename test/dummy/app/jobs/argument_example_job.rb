@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-class DurationExampleJob < ApplicationJob
+class ArgumentExampleJob < ApplicationJob
   include JobContracts::Contractable
 
   queue_as :default
-  add_contract JobContracts::DurationContract.new(max: 1.second)
+  add_contract ArgumentContract.new(range: (1..10))
 
-  def perform(seconds = 2)
-    sleep seconds
+  def perform(arg)
   end
 
   def contract_breached!(contract)
