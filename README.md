@@ -5,10 +5,9 @@
 
 ## Test-like assurances for jobs
 
-Have you ever wanted to prevent a background job from writing to the database?
-What about ensuring it completes within a fixed amount of time after being enqueued?
+Have you ever wanted to prevent a background job from writing to the database or perhaps ensure that it completes within a fixed amount of time?
 
-Contracts allow you to apply assurances like this easily.
+Contracts allow you to easily enforce guarantees like this.
 
 <!-- Tocer[start]: Auto-generated, don't remove. -->
 
@@ -32,16 +31,15 @@ Contracts allow you to apply assurances like this easily.
 
 ## Why use Contracts?
 
-- Organize code structure for better reuse, consistency, and maintainability
-- Improve job performance via enforced *(SLAs/SLOs/SLIs)*
+- Organize your code for better reuse, consistency, and maintainability
 - Refine your telemetry and instrumentation efforts
-- Supervise and manage job queue backpressure
-- Improve your worker formation/topology
-- Properly isolate jobs for maximum throughput
+- Improve job performance via enforced *(SLAs/SLOs/SLIs)*
+- Monitor and manage job queue backpressure
+- Improve your worker formation/topology to support high throughput
 
 ## Quick Start
 
-Imagine you need to ensure a specific job completes within 5 seconds of being enqueued.
+Imagine you want to ensure a specific job completes within 5 seconds of being enqueued.
 
 ```ruby
 class ImportantJob < ApplicationJob
@@ -66,11 +64,11 @@ end
 
 ## Contracts
 
-A contract is an agreement that a job should satisfy.
+A contract is an agreement that a job should fulfill.
 Failing to satisfy the contract is considered a __breach of contract__.
 
-Contracts help you track actual results and compare them to expected outcomes.
-For example, we have a default set of contracts that verify the following:
+Contracts help you track `actual` results and compare them to `expected` outcomes.
+For example, this project has a default set of contracts that verify the following:
 
 - That a job will [execute within a set amount of time](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/duration_contract.rb)
 - That a job is only [performed on a specific queue](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/queue_name_contract.rb)
@@ -78,22 +76,22 @@ For example, we have a default set of contracts that verify the following:
 
 ### Breach of Contract
 
-A __breach of contract__ is similar to a test failure; however, the breach can be handled in several different ways.
+A __breach of contract__ is similar to a test failure; however, the breach can be handled in many different ways.
 
 - Log and instrument the breach and continue
 - Halt processing of the job and all other contracts and raise an exception
 - Move the job to a queue where the contract will not be enforced
 - etc...
 
-*Mix and match any combination of the above given your requirements.*
+*Mix and match any combination of these options to support your requirements.*
 
 ### Anatomy of a Contract
 
 Contracts support the following constructor arguments.
 
-- __`trigger`__ `[Symbol] (:before, *:after)` - when contract enforcement takes place *(before or after perform)*
-- __`halt`__ `[Boolean] (true, *false)` - indicates whether or not to stop processing when the contract is breached *(other contracts and the job itself)*
-- __`queues`__ `[Array<String,Symbol>]` - a list of queue names that this contract will be enforced on *(defaults to the configured queue, or "\*" if the queue has not beeen configured)*
+- __`trigger`__ `[Symbol] (:before, *:after)` - when contract enforcement takes place, *before or after perform*
+- __`halt`__ `[Boolean] (true, *false)` - indicates whether or not to stop processing when the contract is breached
+- __`queues`__ `[Array<String,Symbol>]` - a list of queue names where this contract will be enforced _(defaults to the configured queue, or `*` if the queue has not beeen configured)_
 - __`expected`__ `[Hash]` - a dictionary of contract expectations
 
 ### Defining a Contract
@@ -147,15 +145,16 @@ This job will help ensure that the argument passed to perform is between 1 and 1
 Thoughtful Rails applications often use specialized worker formations.
 
 A simple formation might be to use two sets of workers.
-One set dedicated to low-latency jobs with plenty of CPUs, processes, threads, etc...,
-with another set dedicated to jobs with a high tolerance for latency.
+One set dedicated to fast low-latency jobs with plenty of dedicated compute resources *(CPUs, processes, threads, etc...)*,
+with another set dedicated to slower jobs that uses fewer compute resources.
 
 <img width="593" alt="Untitled 2 2022-04-29 15-06-13" src="https://user-images.githubusercontent.com/32920/166069103-e316dcc7-e601-43d0-90df-ad0eda20409b.png">
 
-Say we determine that low-latency jobs should __not__ write to the database.
+Say we determine that fast low-latency jobs should __not__ write to the database.
+
 We can use a [`ReadOnlyContract`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/contracts/read_only_contract.rb)
-to enforce this decision. If the contract is breached, we will notify our apm/monitoring service and re-enqueue the job to a high-latency queue.
-This will ensure that our low latency queue doesn't fill up with slow-running jobs and block work that can run faster. It also raises awareness about job misconfigurations while ensuring those slow jobs still get performed.
+to enforce this decision. If the contract is breached, we can notify our apm/monitoring service and re-enqueue the job to a slower queue *(worker set)* where database writes are permitted.
+This will ensure that our fast low-latency queue doesn't get clogged with slow-running jobs.
 
 Here's an example job implementation that accomplishes this.
 
@@ -175,7 +174,7 @@ class FastJob < ApplicationJob
   #       we're setting it explicitly here for illustration purposes
   add_contract JobContracts::ReadOnlyContract.new(queues: [:critical])
 
-  def perform(contracts_to_skip=nil)
+  def perform
     # logic that shouldn't write to the database,
     # but might accidentally due to complex or opaque internals
   end
@@ -238,9 +237,9 @@ end
 ## Sidekiq
 
 Sidekiq jobs/workers are supported.
-Unfortunately this support comes with a performance penalty *(i.e. additional latency)* because
-executing jobs don't have direct access to their own metadata, so we wait to find this information
-in the active [`WorkSet`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/concerns/sidekiq_contractable.rb#L23-L25)
+Unfortunately this support comes with a performance penalty *(i.e. additional latency)* because executing
+Sidekiq jobs don't have access to their own metadata. To get around this, we wait to find job metadata in the active
+[`WorkSet`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/concerns/sidekiq_contractable.rb#L23-L25)
 which is only updated [every 5 seconds](https://github.com/mperham/sidekiq/wiki/API#workers).
 
 ## Todo
