@@ -1,4 +1,4 @@
-name: "Ruby on Rails plugin CI"
+name: CI Tests
 on:
   push:
     branches: [ main ]

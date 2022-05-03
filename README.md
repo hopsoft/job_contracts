@@ -1,5 +1,6 @@
 [![Lines of Code](http://img.shields.io/badge/lines_of_code-240-brightgreen.svg?style=flat)](http://blog.codinghorror.com/the-best-code-is-no-code-at-all/)
 [![Code Quality](https://app.codacy.com/project/badge/Grade/f604d4bc6db0474c802ef51182732488)](https://www.codacy.com/gh/hopsoft/job_contracts/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hopsoft/job_contracts&amp;utm_campaign=Badge_Grade)
+![CI Tests](https://github.com/hopsoft/job_contracts/actions/workflows/test/badge.svg)
 
 # Job Contracts
 
