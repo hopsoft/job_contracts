@@ -13,7 +13,7 @@ Contracts allow you to apply assurances like this easily.
 
 ## Table of Contents
 
-  - [Why?](#why)
+  - [Why use Contracts?](#why-use-contracts)
   - [Quick Start](#quick-start)
   - [Contracts](#contracts)
     - [Breach of Contract](#breach-of-contract)
@@ -29,8 +29,9 @@ Contracts allow you to apply assurances like this easily.
 
 <!-- Tocer[finish]: Auto-generated, don't remove. -->
 
-## Why?
+## Why use Contracts?
 
+- Organize code structure for better reuse, consistency, and maintainability
 - Improve job performance via enforced *(SLAs/SLOs/SLIs)*
 - Refine your telemetry and instrumentation efforts
 - Supervise and manage job queue backpressure
