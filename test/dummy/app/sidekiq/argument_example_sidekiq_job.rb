@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
-class ReadOnlyExampleSidekiqJob
+class ArgumentExampleSidekiqJob
   include Sidekiq::Job
   include JobContracts::SidekiqContractable
 
-  sidekiq_options queue: :low
-  add_contract JobContracts::ReadOnlyContract.new
+  sidekiq_options queue: :default
+  add_contract ArgumentContract.new(range: (1..10))
 
-  def perform
-    User.create! name: "test"
+  def perform(arg)
   end
 
   def contract_breached!(contract)

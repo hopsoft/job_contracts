@@ -11,6 +11,6 @@ class ArgumentExampleJob < ApplicationJob
 
   def contract_breached!(contract)
     # log and notify apm/monitoring service
-    Rails.logger.info "Contract breached! #{contract.inspect}"
+    Rails.logger.info "Contract breached! #{contract.to_h.inspect}"
   end
 end

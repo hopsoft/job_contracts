@@ -1,4 +1,4 @@
-[![Lines of Code](http://img.shields.io/badge/lines_of_code-224-brightgreen.svg?style=flat)](http://blog.codinghorror.com/the-best-code-is-no-code-at-all/)
+[![Lines of Code](http://img.shields.io/badge/lines_of_code-240-brightgreen.svg?style=flat)](http://blog.codinghorror.com/the-best-code-is-no-code-at-all/)
 
 # Job Contracts
 
@@ -257,3 +257,6 @@ This project is sponsored by [Orbit.love](https://orbit.love/?utm_source=github&
 <a href="https://orbit.love/?utm_source=github&utm_medium=repo&utm_campaign=hopsoft&utm_content=job_contracts">
   <img height="50" src="https://user-images.githubusercontent.com/32920/166343064-55f92cdb-c81b-4f85-80a8-167bfda73c85.png"></img>
 </a>
+
+This effort was partly inspired by a presentation at [Sin City Ruby](https://www.sincityruby.com/) from our friends on the platform team at [Gusto](https://gusto.com/).
+Their presentation validated some of my prior solutions aimed at accomplishing simimlar goals and motivated me to extract that work into a GEM.

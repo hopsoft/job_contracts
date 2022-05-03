@@ -12,20 +12,23 @@ module JobContracts
       include MonitorMixin
 
       def perform(*args)
-        should_perform = true
+        # fetch sidekiq job/worker metadata on main thread
+        try :sidekiq_job_metadata
+
+        halted = false
         contracts.select(&:before?).each do |contract|
-          contract.enforce! self
-          should_perform = false if contract.breached? && contract.halt?
+          contract.enforce! self unless halted
+          halted = true if contract.breached? && contract.halt?
         end
-        super if should_perform
+        super unless halted
       ensure
-        # enforce contracts in a separate thread to ensure that any perform related behavior
+        # enforce after contracts in a separate thread to ensure that any perform related behavior
         # defined in ContractablePrepends will finish executing before we invoke contract.enforce!
         Thread.new do
           sleep 0
           synchronize do
             contracts.select(&:after?).each do |contract|
-              contract.enforce! self
+              contract.enforce! self unless halted
             end
           end
         end

@@ -59,6 +59,17 @@ module JobContracts
       trigger == :after
     end
 
+    def to_h
+      HashWithIndifferentAccess.new(
+        name: self.class.name,
+        trigger: trigger,
+        halt: halt?,
+        queues: queues.to_a,
+        expected: expected,
+        actual: actual
+      )
+    end
+
     protected
 
     attr_accessor :satisfied
