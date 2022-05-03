@@ -189,6 +189,9 @@ class FastJob < ApplicationJob
 end
 ```
 
+*Worker formations can be designed in countless ways to handle incredibly sophisticated requirements and operational constraints.
+The only real limitation is your creativity.*
+
 ## Advanced Usage
 
 It's possible to override the default callback method that handles contract breaches.
@@ -232,13 +235,15 @@ end
 
 ## Sidekiq
 
-...
+Sidekiq jobs/workers are supported.
+Unfortunately this support comes with a performance penalty *(i.e. additional latency)* because
+executing jobs don't have direct access to their own metadata, so we wait to find this information
+in the active [`WorkSet`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/concerns/sidekiq_contractable.rb#L23-L25)
+which is only updated [every 5 seconds](https://github.com/mperham/sidekiq/wiki/API#workers).
 
 ## Todo
 
-- [x] ActiveJob tests
 - [ ] Sidekiq tests
-- [ ] Documentation
 
 ## License
 
