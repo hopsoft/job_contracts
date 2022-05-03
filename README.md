@@ -21,6 +21,7 @@ Contracts allow you to apply assurances like this easily.
     - [Defining a Contract](#defining-a-contract)
     - [Using a Contract](#using-a-contract)
   - [Worker Formation/Topology](#worker-formationtopology)
+  - [Advanced Usage](#advanced-usage)
   - [Sidekiq](#sidekiq)
   - [Todo](#todo)
   - [License](#license)
@@ -52,6 +53,7 @@ class ImportantJob < ApplicationJob
     # logic...
   end
 
+  # default callback that's invoked if the contract is breached
   def contract_breached!(contract)
     # handle breach...
   end
@@ -128,6 +130,7 @@ class ArgumentExampleJob < ApplicationJob
     # logic...
   end
 
+  # default callback that's invoked if the contract is breached
   def contract_breached!(contract)
     # handle breach...
   end
@@ -182,6 +185,47 @@ class FastJob < ApplicationJob
     # where the database write will be permitted
     # i.e. where the contract will not be enforced
     enqueue queue: :default
+  end
+end
+```
+
+## Advanced Usage
+
+It's possible to override the default callback method that handles contract breaches.
+
+```ruby
+class ImportantJob < ApplicationJob
+  include JobContracts::Contractable
+
+  queue_as :default
+
+  on_contract_breach :take_action
+  add_contract JobContracts::DurationContract.new(max: 5.seconds)
+
+  def perform
+    # logic...
+  end
+
+  def take_action(contract)
+    # handle breach...
+  end
+end
+```
+
+```ruby
+class ImportantJob < ApplicationJob
+  include JobContracts::Contractable
+
+  queue_as :default
+
+  on_contract_breach -> (contract) {
+    # take action...
+  }
+
+  add_contract JobContracts::DurationContract.new(max: 5.seconds)
+
+  def perform
+    # logic...
   end
 end
 ```
