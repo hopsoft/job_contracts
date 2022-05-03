@@ -75,11 +75,5 @@ module JobContracts
     def contract_breached!
       # noop / override in job subclasses
     end
-
-    def on_contract_breach(contract)
-      breached_contracts << contract
-      method = self.class.on_contract_breach_callback
-      method.is_a?(Proc) ? method.call(contract) : send(method.to_s, contract)
-    end
   end
 end

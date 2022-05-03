@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-require "observer"
-
 module JobContracts
   class Contract
-    include Observable
-
     attr_reader :trigger, :queues
 
     def initialize(trigger: :after, halt: false, queues: [], expected: {})
@@ -32,11 +28,9 @@ module JobContracts
     # NOTE: subclasses should update `actual`, set `satisfied`, and call `super`
     def enforce!(contractable)
       return unless should_enforce?(contractable)
-      add_observer contractable, :on_contract_breach
-      changed if breached?
-      notify_observers self
-    ensure
-      delete_observer contractable
+      return if satisfied?
+      contractable.breached_contracts << self
+      invoke_contract_breach_callback contractable
     end
 
     def satisfied?
@@ -73,5 +67,11 @@ module JobContracts
     protected
 
     attr_accessor :satisfied
+
+    def invoke_contract_breach_callback(contractable)
+      callback = contractable.class.on_contract_breach_callback
+      callback = contractable.method(callback.to_sym) unless callback.is_a?(Proc)
+      callback.call self
+    end
   end
 end
