@@ -1,4 +1,4 @@
-[![Lines of Code](http://img.shields.io/badge/lines_of_code-236-brightgreen.svg?style=flat)](http://blog.codinghorror.com/the-best-code-is-no-code-at-all/)
+[![Lines of Code](http://img.shields.io/badge/lines_of_code-232-brightgreen.svg?style=flat)](http://blog.codinghorror.com/the-best-code-is-no-code-at-all/)
 [![Code Quality](https://app.codacy.com/project/badge/Grade/f604d4bc6db0474c802ef51182732488)](https://www.codacy.com/gh/hopsoft/job_contracts/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hopsoft/job_contracts&amp;utm_campaign=Badge_Grade)
 ![Tests](https://github.com/hopsoft/job_contracts/actions/workflows/test.yml/badge.svg)
 [![Gem Version](https://badge.fury.io/rb/job_contracts.svg)](https://badge.fury.io/rb/job_contracts)
@@ -48,7 +48,6 @@ class ImportantJob < ApplicationJob
   include JobContracts::Contractable
 
   queue_as :default
-
   add_contract JobContracts::DurationContract.new(max: 5.seconds)
 
   def perform
@@ -204,7 +203,6 @@ class ImportantJob < ApplicationJob
   include JobContracts::Contractable
 
   queue_as :default
-
   on_contract_breach :take_action
   add_contract JobContracts::DurationContract.new(max: 5.seconds)
 
@@ -223,10 +221,7 @@ class ImportantJob < ApplicationJob
   include JobContracts::Contractable
 
   queue_as :default
-
-  on_contract_breach -> (contract) {
-    # take action...
-  }
+  on_contract_breach -> (contract) { # take action... }
 
   add_contract JobContracts::DurationContract.new(max: 5.seconds)
 
@@ -238,11 +233,26 @@ end
 
 ## Sidekiq
 
-Sidekiq is highly optimized for speed and low memory consumption.
-Unfortunately this means that during execution, Sidekiq jobs lack the ability to introspect the metadata about how and when they were enqueued.
-Ironically, `Sidekiq::Job` support introduces additional latency because we're required to lookup job metadata in the active
-[`WorkSet`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/concerns/sidekiq_contractable.rb#L23-L25)
-which is only updated [every 5 seconds](https://github.com/mperham/sidekiq/wiki/API#workers).
+`Sidekiq::Job`s are also supported.
+
+```ruby
+class ImportantJob
+  include Sidekiq::Job
+  include JobContracts::SidekiqContractable
+
+  sidekiq_options queue: :default
+  add_contract JobContracts::DurationContract.new(max: 1.second)
+
+  def perform
+    # logic...
+  end
+
+  # default callback that's invoked if the contract is breached
+  def contract_breached!(contract)
+    # handle breach...
+  end
+end
+```
 
 ## Todo
 
