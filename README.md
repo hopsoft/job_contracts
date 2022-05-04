@@ -98,7 +98,7 @@ Contracts support the following constructor arguments.
 
 ### Defining a Contract
 
-Here's a contrived but simple example that ensures the first argument to perform fits within a specific range of values.
+Here's a contrived, but simple, example that ensures the first argument passed to perform fits within a specific range of values.
 
 ```ruby
 # app/contracts/argument_contract.rb
@@ -239,8 +239,9 @@ end
 ## Sidekiq
 
 Sidekiq jobs/workers are supported.
-Unfortunately this support comes with a performance penalty *(i.e. additional latency)* because executing
-Sidekiq jobs don't have access to their own metadata. To get around this, we wait to find job metadata in the active
+Sidekiq is highly optimized for speed and to have a small memory footprint.
+Unfortunately this means that Sidekiq jobs lack the ability to introspect metadata about how and when they were enqueued.
+Ironically this means that `Sidekiq::Job` support introduces additional latency because we're required to lookup job metadata in the active
 [`WorkSet`](https://github.com/hopsoft/job_contracts/blob/main/lib/job_contracts/concerns/sidekiq_contractable.rb#L23-L25)
 which is only updated [every 5 seconds](https://github.com/mperham/sidekiq/wiki/API#workers).
 
