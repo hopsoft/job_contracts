@@ -7,8 +7,8 @@ class DurationExampleSidekiqJob
   sidekiq_options queue: :default
   add_contract JobContracts::DurationContract.new(max: 1.second)
 
-  def perform
-    sleep 2
+  def perform(seconds = 2)
+    sleep seconds
   end
 
   def contract_breached!(contract)

@@ -9,6 +9,7 @@ class MultipleContractsExampleJob < ApplicationJob
   add_contract JobContracts::ReadOnlyContract.new
 
   def perform
+    Rails.logger.info "Actually performed on: #{queue_name}"
     sleep 2
     User.create! name: "test"
   end

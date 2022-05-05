@@ -15,21 +15,16 @@ module JobContracts
         # fetch sidekiq job/worker metadata on main thread
         try :sidekiq_job_metadata
 
-        halted = false
-        contracts.select(&:before?).each do |contract|
-          contract.enforce! self unless halted
-          halted = true if contract.breached? && contract.halt?
-        end
+        halted = enforce_contracts!(contracts.select(&:before?))
         super unless halted
       ensure
-        # enforce after contracts in a separate thread to ensure that any perform related behavior
-        # defined in ContractablePrepends will finish executing before we invoke contract.enforce!
-        Thread.new do
-          sleep 0
-          synchronize do
-            contracts.select(&:after?).each do |contract|
-              contract.enforce! self unless halted
-            end
+        unless halted
+          # enforce after-contracts in a separate thread to ensure that any perform related behavior
+          # defined in ContractablePrepends will finish executing before we invoke contract.enforce!
+          # important when multiple contracts have been applied
+          Thread.new do
+            sleep 0
+            synchronize { enforce_contracts! contracts.select(&:after?) }
           end
         end
       end
@@ -74,6 +69,18 @@ module JobContracts
     # Default callback
     def contract_breached!
       # noop / override in job subclasses
+    end
+
+    private
+
+    def enforce_contracts!(contracts)
+      halted = false
+      contracts.each do |contract|
+        next if halted
+        contract.enforce! self
+        halted ||= contract.breached? && contract.halt?
+      end
+      halted
     end
   end
 end
