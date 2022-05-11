@@ -3,7 +3,6 @@
 ![Tests](https://github.com/hopsoft/job_contracts/actions/workflows/test.yml/badge.svg)
 [![Gem Version](https://badge.fury.io/rb/job_contracts.svg)](https://badge.fury.io/rb/job_contracts)
 [![Gem Downloads](https://img.shields.io/gem/dt/job_contracts)](https://rubygems.org/gems/job_contracts)
-[![Follow Hopsoft](https://img.shields.io/twitter/follow/hopsoft?style=social)](https://twitter.com/hopsoft)
 
 # Job Contracts
 
