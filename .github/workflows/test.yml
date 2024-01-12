@@ -8,17 +8,29 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.0", "3.1", "3.2", "3.3"]
+        rails: ["~> 6.1.0", "~> 7.0.0"]
+        sidekiq: ["~> 6.4.0", "~> 6.5.0", "~> 7.0.0"]
     env:
       RAILS_ENV: test
+      RAILS_VERSION: ${{ matrix.rails }}
+      SIDEKIQ_VERSION: ${{ matrix.sidekiq }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Remove Gemfile.lock
+        run: rm Gemfile.lock
 
       - name: Install Ruby and gems
-        uses: ruby/setup-ruby@8f312efe1262fb463d906e9bf040319394c18d3e # v1.92
+        uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          ruby-version: ${{ matrix.ruby }}
 
       - name: Run tests
         run: bin/test
